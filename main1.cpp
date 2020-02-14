@@ -6,6 +6,8 @@
 
 SDL_Event evt;
 
+Mix_Chunk *scratch = NULL;
+
 ////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
@@ -15,10 +17,15 @@ if (argc>1) { strcpy(filename,argv[1]); } else { strcpy(filename,"salud.mp4");}
 //------------------------------------------------------------------------	
 gr_init(filename,800,600,0);
 
-av_register_all();
+//av_register_all();
 avformat_network_init();
 
 //videoopen(filename,512,300);
+
+Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 );
+scratch = Mix_LoadWAV( "piano.wav" );
+
+
 
 int salida=0;
 while (!salida) {
@@ -29,10 +36,12 @@ while (!salida) {
 	      switch(evt.key.keysym.sym) {
 	    	case SDLK_F1: videoclose();break;
 	    	case SDLK_F2: videoopen("ccc.mp4",512,300);break;
-	    	case SDLK_F3: videoopen("Titanic.ts",512,300);break;
+	    	case SDLK_F3: videoopen("pro2.mp4",512,300);break;
 	    	case SDLK_F4: videoopen("bigbuckbunny_480x272.h265",512,300);break;
 	    	case SDLK_F5: videoresize(700,500);break;
-			case SDLK_F6: videoresize(512,500);break;	    	
+			case SDLK_F6: videoresize(512,500);break;	
+			
+            case  SDLK_1: Mix_PlayChannel( -1, scratch, 0 );break; 	
 	    	case SDLK_ESCAPE: salida=1;break;
 			default:break;
       		}
@@ -51,6 +60,9 @@ while (!salida) {
 	gr_redraw();
 	}
 	
+    Mix_FreeChunk( scratch );
+    Mix_CloseAudio();
+
 videoclose();
 gr_fin();
 return 0;
